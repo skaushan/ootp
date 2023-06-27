@@ -1,0 +1,40 @@
+interface ILogger
+{
+    void LogMessage(string message);
+    void LogError(string message);
+    void LogVerboseInformation(string message);
+}
+class Log4NetLogger : ILogger
+{
+    public void LogMessage(string message)
+    {
+    Console.WriteLine(string.Format("{0}: {1}", "Log4Net", message));
+    }
+    // Інші методи не наводимо
+class LoggerProviderFactory
+{
+    public static ILogger GetLoggingProvider(LoggingProviders logProviders)
+    {
+        switch (logProviders)
+        {
+            case LoggingProviders.Enterprise:
+                return new EnterpriseLogger();
+            case LoggingProviders.Log4Net:
+                return new Log4NetLogger();
+            default:
+                return new EnterpriseLogger();
+        }
+    }
+}
+public static void Run()
+{
+    var providerType = GetTypeOfLoggingProviderFromConfigFile();
+    ILogger logger = LoggerProviderFactory.GetLoggingProvider(providerType);
+    logger.LogMessage("Hello Factory Method Design Pattern.");
+    // Вивід: [Log4Net: Hello Factory Method Design Pattern]
+}
+private static LoggingProviders GetTypeOfLoggingProviderFromConfigFile()
+{
+    // Це такий собі хадркод, щоб не ускладнювати прикладу
+    return LoggingProviders.Log4Net;
+}
